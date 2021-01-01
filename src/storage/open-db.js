@@ -6,7 +6,7 @@ const DB_VERSION = 1;
 
 const onUpgradeNeeded = (event) => {
   const db = event.target.result;
-  db.createObjectStore(dataObjectStoreName);
+  db.createObjectStore(dataObjectStoreName, { keyPath: 'key' });
 };
 
 const openDb = makeOpenDb({

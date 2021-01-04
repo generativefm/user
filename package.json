@@ -4,7 +4,8 @@
   "description": "User-related utilities for Generative.fm",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@alexbainter/eslint-config": "^0.1.2",
     "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@rollup/plugin-babel": "^5.2.2",
     "eslint": "^7.16.0",

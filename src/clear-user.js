@@ -1,4 +1,4 @@
-import clearFetchedUser from './storage/clear-data';
+import clearFetchedUser from './storage/clear-fetched-user';
 import IS_STORAGE_SUPPORTED from './storage/is-supported';
 
 const clearUser = ({ changeManager }) => {

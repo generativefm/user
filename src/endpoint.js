@@ -1,3 +1,3 @@
-const endpoint = process.env.GFM_USERS_ENDPOINT;
+const endpoint = process.env.GFM_USER_ENDPOINT;
 
 export default endpoint;

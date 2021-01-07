@@ -1,6 +1,6 @@
 import babel from '@rollup/plugin-babel';
 
-const config = {
+const fullConfig = {
   input: 'src/index.js',
   output: [
     {
@@ -13,7 +13,20 @@ const config = {
     },
   ],
   plugins: [babel({ babelHelpers: 'runtime' })],
-  external: [/@babel\/runtime/, '@alexbainter/indexed-db'],
+  external: [/@babel\/runtime/, '@alexbainter/indexed-db', 'redux'],
 };
 
-export default config;
+const userDataReducerConfig = {
+  input: 'src/user-data-reducer.js',
+  output: [
+    {
+      format: 'cjs',
+      file: 'dist/user-data-reducer.cjs.js',
+      exports: 'default',
+    },
+  ],
+  plugins: [],
+  external: ['redux'],
+};
+
+export default [fullConfig, userDataReducerConfig];

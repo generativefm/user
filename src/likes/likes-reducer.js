@@ -2,6 +2,8 @@ import { USER_LIKED_PIECE } from './user-liked-piece';
 import { USER_UNLIKED_PIECE } from './user-unliked-piece';
 import { USER_DISLIKED_PIECE } from '../dislikes/user-disliked-piece';
 import { USER_LOGGED_OUT } from '../user-logged-out';
+import { USER_FETCHED } from '../fetch/user-fetched';
+import { ACTIONS_POSTED } from '../post-actions/actions-posted';
 
 const likesReducer = (state = {}, action) => {
   switch (action.type) {
@@ -30,6 +32,10 @@ const likesReducer = (state = {}, action) => {
     }
     case USER_LOGGED_OUT: {
       return {};
+    }
+    case USER_FETCHED:
+    case ACTIONS_POSTED: {
+      return action.payload.user.likes;
     }
   }
   return state;

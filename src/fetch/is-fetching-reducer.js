@@ -1,6 +1,7 @@
-import { FETCH_USER } from './fetch-user';
+import { FETCH_USER } from './fetch-user-action';
 import { USER_FETCHED } from './user-fetched';
-import { ACTIONS_POSTED } from '../is-posting-actions/actions-posted';
+import { ACTIONS_POSTED } from '../post-actions/actions-posted';
+import { FETCH_FAILED } from './fetch-failed';
 
 const isFetchingReducer = (state = false, action) => {
   switch (action.type) {
@@ -8,6 +9,7 @@ const isFetchingReducer = (state = false, action) => {
       return true;
     }
     case USER_FETCHED:
+    case FETCH_FAILED:
     case ACTIONS_POSTED: {
       return false;
     }

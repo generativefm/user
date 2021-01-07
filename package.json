@@ -30,10 +30,13 @@
     "@rollup/plugin-babel": "^5.2.2",
     "eslint": "^7.16.0",
     "prettier": "^2.2.1",
+    "redux": "^4.0.5",
     "rollup": "^2.35.1"
   },
   "dependencies": {
-    "@alexbainter/indexed-db": "^0.1.1",
+    "@alexbainter/indexed-db": "^0.1.1"
+  },
+  "peerDependencies": {
     "redux": "^4.0.5"
   }
 }

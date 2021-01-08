@@ -1,7 +1,7 @@
 import ENDPOINT from '../endpoint';
 import IS_INDEXED_DB_SUPPORTED from '../storage/is-supported';
-import getFetchedUser from '../storage/get-fetched-user';
-import storeFetchedUser from '../storage/store-fetched-user';
+import getFetchedUser from './get-fetched-user';
+import storeFetchedUser from './store-fetched-user';
 
 const CACHE_NAME = '@generative.fm/user';
 const IS_CACHE_SUPPORTED = Boolean(caches);

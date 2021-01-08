@@ -1,14 +1,14 @@
 import { promisifyRequest } from '@alexbainter/indexed-db';
-import openDb from './open-db';
+import openDb from '../storage/open-db';
 import ACTION_OBJECT_STORE_NAME from './action-object-store-name';
 
-const storeAction = (action) =>
+const clearStoredActions = () =>
   openDb().then((db) =>
     promisifyRequest(
       db
         .transaction(ACTION_OBJECT_STORE_NAME, 'readwrite')
         .objectStore(ACTION_OBJECT_STORE_NAME)
-        .put(action)
+        .clear()
     )
       .then(() => true)
       .catch((err) => {
@@ -17,4 +17,4 @@ const storeAction = (action) =>
       })
   );
 
-export default storeAction;
+export default clearStoredActions();

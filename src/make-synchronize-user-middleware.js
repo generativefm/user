@@ -2,20 +2,20 @@ import { FETCH_USER } from './fetch/fetch-user-action';
 import fetchUser from './fetch/fetch-user';
 import userFetched from './fetch/user-fetched';
 import fetchFailed from './fetch/fetch-failed';
-import selectIsPostingActions from './post-actions/select-is-posting-actions';
-import postActions from './post-actions/post-actions';
-import postActionsFailed from './post-actions/post-actions-failed';
-import actionsPosted, { ACTIONS_POSTED } from './post-actions/actions-posted';
+import selectIsPostingActions from './actions/select-is-posting-actions';
+import postActions from './actions/post-actions';
+import postActionsFailed from './actions/post-actions-failed';
+import actionsPosted, { ACTIONS_POSTED } from './actions/actions-posted';
 import selectUserId from './user-id/select-user-id';
 import selectToken from './token/select-token';
 import { USER_LOGGED_OUT } from './user-logged-out';
 import IS_STORAGE_SUPPORTED from './storage/is-supported';
-import getStoredActions from './storage/get-stored-actions';
-import storeAction from './storage/store-action';
-import deleteStoredActions from './storage/delete-stored-actions';
+import getStoredActions from './actions/get-stored-actions';
+import storeAction from './actions/store-action';
+import deleteStoredActions from './actions/delete-stored-actions';
 import clearData from './storage/clear-data';
 
-const makeUserMiddleware = ({ selectUser }) => (store) => (next) => {
+const makeSynchronizeUserMiddleware = ({ selectUser }) => (store) => (next) => {
   const actionsToPost = new Set();
   const isReady = IS_STORAGE_SUPPORTED
     ? getStoredActions().then((actions) => {
@@ -23,15 +23,9 @@ const makeUserMiddleware = ({ selectUser }) => (store) => (next) => {
       })
     : Promise.resolve();
   let hasChanged = false;
-  const selectUserIdAndToken = (state) => {
-    const userState = selectUser(state);
-    const userId = selectUserId(state);
-    const token = selectToken(userState);
-    return { userId, token };
-  };
-  const postActionsAndDispatch = () => {
+  const postActionsAndDispatch = ({ userState, token }) => {
     const attemptedPostActions = Array.from(actionsToPost);
-    const { userId, token } = selectUserIdAndToken(store.getState());
+    const { userId } = selectUserId(userState);
     return isReady.then(() =>
       postActions({ actions: attemptedPostActions, userId, token })
         .then(({ user }) => {
@@ -56,35 +50,39 @@ const makeUserMiddleware = ({ selectUser }) => (store) => (next) => {
         })
     );
   };
-  const postActionsIfNotPosting = () => {
-    const currentState = store.getState();
-    const userState = selectUser(currentState);
+  const postActionsIfNotPosting = ({ userState, token }) => {
     const isPostingActions = selectIsPostingActions(userState);
     if (!isPostingActions) {
-      postActionsAndDispatch();
+      postActionsAndDispatch({ userState, token });
     }
   };
   return (action) => {
+    const state = store.getState();
+    const userState = selectUser(state);
+    const token = selectToken(userState);
+    if (!token) {
+      return next(action);
+    }
     if (action.type === USER_LOGGED_OUT) {
       actionsToPost.clear();
       clearData();
       return next(action);
     }
     if (action.type === ACTIONS_POSTED && actionsToPost.size > 0) {
-      postActionsAndDispatch();
+      postActionsAndDispatch({ userState, token });
       return next(action);
     }
     if (action.type === FETCH_USER) {
       if (actionsToPost.size > 0) {
-        postActionsIfNotPosting();
+        postActionsIfNotPosting({ userState, token });
       } else {
-        const { userId, token } = selectUserIdAndToken(store.getState());
+        const { userId } = selectUserId(userState);
         isReady.then(() =>
           fetchUser({ userId, token })
             .then(({ user, isFresh }) => {
               const currentState = store.getState();
-              const userState = selectUser(currentState);
-              const isPostingActions = selectIsPostingActions(userState);
+              const currentUserState = selectUser(currentState);
+              const isPostingActions = selectIsPostingActions(currentUserState);
               if (isPostingActions) {
                 // if a post was started before the fetch completed,
                 // just wait for that post to complete
@@ -114,12 +112,14 @@ const makeUserMiddleware = ({ selectUser }) => (store) => (next) => {
     hasChanged = true;
     actionsToPost.push(action);
     if (IS_STORAGE_SUPPORTED) {
-      storeAction(action).then(() => postActionsIfNotPosting());
+      storeAction(action).then(() =>
+        postActionsIfNotPosting({ userState, token })
+      );
     } else {
-      postActionsIfNotPosting();
+      postActionsIfNotPosting({ userState, token });
     }
     return next(action);
   };
 };
 
-export default makeUserMiddleware;
+export default makeSynchronizeUserMiddleware;

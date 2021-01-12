@@ -37,6 +37,7 @@
     "@alexbainter/indexed-db": "^0.1.1"
   },
   "peerDependencies": {
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "@generative-music/pieces-alex-bainter": "^4.6.1"
   }
 }

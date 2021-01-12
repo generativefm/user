@@ -4,6 +4,7 @@ import { USER_DISLIKED_PIECE } from '../dislikes/user-disliked-piece';
 import { USER_LOGGED_OUT } from '../user-logged-out';
 import { USER_FETCHED } from '../fetch/user-fetched';
 import { ACTIONS_POSTED } from '../actions/actions-posted';
+import { MERGE_DATA } from '../merge-data';
 
 const likesReducer = (state = {}, action) => {
   switch (action.type) {
@@ -35,7 +36,20 @@ const likesReducer = (state = {}, action) => {
     }
     case USER_FETCHED:
     case ACTIONS_POSTED: {
-      return action.payload.user.likes;
+      return action.payload.user.likes || {};
+    }
+    case MERGE_DATA: {
+      const { likes = {}, dislikes = {} } = action.payload;
+      return Object.keys(state)
+        .filter(
+          (pieceId) => !dislikes[pieceId] || dislikes[pieceId] <= state[pieceId]
+        )
+        .reduce((o, pieceId) => {
+          o[pieceId] = likes[pieceId]
+            ? Math.max(likes[pieceId], state[pieceId])
+            : state[pieceId];
+          return o;
+        }, Object.assign({}, likes));
     }
   }
   return state;

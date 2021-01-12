@@ -21,7 +21,7 @@ const userDataReducerConfig = {
   output: [
     {
       format: 'cjs',
-      file: 'dist/user-data-reducer.cjs.js',
+      file: 'dist/user-data-reducer.js',
       exports: 'default',
     },
   ],

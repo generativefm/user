@@ -1,7 +1,4 @@
 import ENDPOINT from '../endpoint';
-import IS_INDEXED_DB_SUPPORTED from '../storage/is-supported';
-import getFetchedUser from './get-fetched-user';
-import storeFetchedUser from './store-fetched-user';
 
 const CACHE_NAME = '@generative.fm/user';
 const IS_CACHE_SUPPORTED = Boolean(caches);
@@ -16,7 +13,7 @@ const transformResponse = (response) => {
   });
 };
 
-const retrieveWithCache = (request) =>
+const fetchWithCache = (request) =>
   caches.open(CACHE_NAME).then((cache) => {
     cache
       .add(request)
@@ -24,7 +21,7 @@ const retrieveWithCache = (request) =>
         cache
           .match(request)
           .then(transformResponse)
-          .then((user) => ({ user, isFresh: true }))
+          .then(({ user }) => ({ user, isFresh: true }))
       )
       .catch((err) => {
         console.error(err);
@@ -32,7 +29,7 @@ const retrieveWithCache = (request) =>
           if (!response) {
             return { user: null };
           }
-          return transformResponse(response).then((user) => ({
+          return transformResponse(response).then(({ user }) => ({
             user,
             isFresh: false,
           }));
@@ -40,31 +37,16 @@ const retrieveWithCache = (request) =>
       });
   });
 
-const retrieveFromNetwork = (request) =>
+const fetchFromNetwork = (request) =>
   fetch(request)
     .then(transformResponse)
-    .then((user) => ({ user, isFresh: true }))
+    .then(({ user }) => ({ user, isFresh: true }))
     .catch((err) => {
       console.error(err);
       return { user: null };
     });
 
-const retrieveWithIndexedDB = ({ request, userId }) =>
-  retrieveFromNetwork(request).then(({ user }) => {
-    if (user === null) {
-      return getFetchedUser(userId).then((storedUser) => ({
-        user: storedUser,
-        isFresh: false,
-      }));
-    }
-    return storeFetchedUser(user)
-      .catch((err) => {
-        console.error(err);
-      })
-      .then(() => ({ user, isFresh: true }));
-  });
-
-const getUser = ({ userId, token } = {}) => {
+const fetchUser = ({ userId, token } = {}) => {
   if (!userId || !token) {
     return Promise.reject(
       new Error("Can't get user data without a userId and a token")
@@ -76,15 +58,10 @@ const getUser = ({ userId, token } = {}) => {
   };
   const request = new Request(fetchUrl, { headers });
 
-  let retrievalPromise;
   if (IS_CACHE_SUPPORTED) {
-    retrievalPromise = retrieveWithCache(request);
-  } else if (IS_INDEXED_DB_SUPPORTED) {
-    retrievalPromise = retrieveWithIndexedDB({ request, userId });
-  } else {
-    retrievalPromise = retrieveFromNetwork(request);
+    return fetchWithCache(request);
   }
-  return retrievalPromise;
+  return fetchFromNetwork(request);
 };
 
-export default getUser;
+export default fetchUser;

@@ -1,1 +1,0 @@
-export default 'FETCHED_USER_OBJECT_STORE_NAME';

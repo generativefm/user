@@ -20,9 +20,9 @@ const getStoredState = () =>
           )
           .catch((err) => {
             console.error(err);
-            return null;
+            return;
           })
       )
-    : Promise.resolve(null);
+    : Promise.resolve();
 
 export default getStoredState;

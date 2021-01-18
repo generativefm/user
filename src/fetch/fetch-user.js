@@ -14,7 +14,7 @@ const transformResponse = (response) => {
 };
 
 const fetchWithCache = (request) =>
-  caches.open(CACHE_NAME).then((cache) => {
+  caches.open(CACHE_NAME).then((cache) =>
     cache
       .add(request)
       .then(() =>
@@ -34,8 +34,8 @@ const fetchWithCache = (request) =>
             isFresh: false,
           }));
         });
-      });
-  });
+      })
+  );
 
 const fetchFromNetwork = (request) =>
   fetch(request)

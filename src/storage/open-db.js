@@ -7,7 +7,7 @@ const DB_VERSION = 1;
 
 const onUpgradeNeeded = (event) => {
   const db = event.target.result;
-  db.createObjectStore(ACTION_OBJECT_STORE_NAME, { keyPath: 'timestamp' });
+  db.createObjectStore(ACTION_OBJECT_STORE_NAME, { keyPath: 'meta.timestamp' });
   db.createObjectStore(STATE_OBJECT_STORE_NAME, { keyPath: 'key' });
 };
 

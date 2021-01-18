@@ -17,4 +17,4 @@ const clearStoredActions = () =>
       })
   );
 
-export default clearStoredActions();
+export default clearStoredActions;

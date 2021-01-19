@@ -2,6 +2,7 @@ import selectLikes from '../likes/select-likes';
 import selectHistory from '../history/select-history';
 import selectDislikes from '../dislikes/select-dislikes';
 import selectPlayTime from '../play-time/select-play-time';
+import selectUserId from '../user-id/select-user-id';
 import storeStateProperties from './store-state-properties';
 import IS_SUPPORTED from './is-supported';
 
@@ -11,13 +12,14 @@ const makeStoreStateMiddleware = ({ selectUser }) => {
   }
   const selectStoredValues = (state) => {
     const userState = selectUser(state);
-    const [likes, history, dislikes, playTime] = [
+    const [likes, history, dislikes, playTime, userId] = [
       selectLikes,
       selectHistory,
       selectDislikes,
       selectPlayTime,
+      selectUserId,
     ].map((selector) => selector(userState));
-    return { likes, history, dislikes, playTime };
+    return { likes, history, dislikes, playTime, userId };
   };
   return (store) => (next) => (action) => {
     const previousState = store.getState();

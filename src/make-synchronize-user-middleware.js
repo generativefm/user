@@ -14,7 +14,8 @@ import IS_STORAGE_SUPPORTED from './storage/is-supported';
 import getStoredActions from './actions/get-stored-actions';
 import storeAction from './actions/store-action';
 import deleteStoredActions from './actions/delete-stored-actions';
-import clearData from './storage/clear-data';
+import { USER_STARTED_ANONYMOUS_SESSION } from './user-started-anonymous-session';
+import clearStoredActions from './actions/clear-stored-actions';
 
 const makeSynchronizeUserMiddleware = ({ selectUser }) => (store) => (next) => {
   const actionsToPost = new Set();
@@ -106,14 +107,42 @@ const makeSynchronizeUserMiddleware = ({ selectUser }) => (store) => (next) => {
   return (action) => {
     if (action.type === USER_LOGGED_OUT) {
       actionsToPost.clear();
-      clearData();
+      if (IS_STORAGE_SUPPORTED) {
+        clearStoredActions();
+      }
       return next(action);
     }
     const state = store.getState();
     const userState = selectUser(state);
+    if (action.type === USER_STARTED_ANONYMOUS_SESSION) {
+      const previousUserId = selectUserId(userState);
+      const shouldClearData = previousUserId !== null;
+      action.payload = Object.assign({}, action.payload, {
+        shouldClearData,
+      });
+      if (!shouldClearData) {
+        return next(action);
+      }
+      actionsToPost.clear();
+      if (IS_STORAGE_SUPPORTED) {
+        clearStoredActions();
+      }
+      return next(action);
+    }
     if (action.type === USER_AUTHENTICATED) {
       const { token, userId } = action.payload;
+      const previousUserId = selectUserId(userState);
+      if (userId !== previousUserId) {
+        action.payload = Object.assign({}, action.payload, {
+          shouldClearData: true,
+        });
+        actionsToPost.clear();
+        if (IS_STORAGE_SUPPORTED) {
+          clearStoredActions();
+        }
+      }
       fetchUserIfNotPosting({ userState, token, userId });
+      return next(action);
     }
     const token = selectToken(userState);
     if (!token) {

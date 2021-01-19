@@ -3,6 +3,8 @@ import { USER_LOGGED_OUT } from '../user-logged-out';
 import { USER_FETCHED } from '../fetch/user-fetched';
 import { ACTIONS_POSTED } from '../actions/actions-posted';
 import { MERGE_DATA } from '../merge-data';
+import { USER_AUTHENTICATED } from '../user-authenticated';
+import { USER_STARTED_ANONYMOUS_SESSION } from '../user-started-anonymous-session';
 
 const historyReducer = (state = {}, action) => {
   switch (action.type) {
@@ -15,6 +17,13 @@ const historyReducer = (state = {}, action) => {
     }
     case USER_LOGGED_OUT: {
       return {};
+    }
+    case USER_STARTED_ANONYMOUS_SESSION:
+    case USER_AUTHENTICATED: {
+      if (action.payload.shouldClearData) {
+        return {};
+      }
+      return state;
     }
     case USER_FETCHED:
     case ACTIONS_POSTED: {

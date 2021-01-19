@@ -43,3 +43,7 @@ export {
 } from './user-authenticated';
 export { default as userDataReducer } from './user-data-reducer';
 export { default as userLoggedOut, USER_LOGGED_OUT } from './user-logged-out';
+export {
+  default as userStartedAnonymousSession,
+  USER_STARTED_ANONYMOUS_SESSION,
+} from './user-started-anonymous-session';

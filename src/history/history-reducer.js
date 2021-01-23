@@ -5,6 +5,7 @@ import { ACTIONS_POSTED } from '../actions/actions-posted';
 import { MERGE_DATA } from '../merge-data';
 import { USER_AUTHENTICATED } from '../user-authenticated';
 import { USER_STARTED_ANONYMOUS_SESSION } from '../user-started-anonymous-session';
+import { UNMERGE_DATA } from '../unmerge-data';
 
 const historyReducer = (state = {}, action) => {
   switch (action.type) {
@@ -37,6 +38,25 @@ const historyReducer = (state = {}, action) => {
           : state[pieceId];
         return o;
       }, Object.assign({}, history));
+    }
+    case UNMERGE_DATA: {
+      const {
+        mergedData: { history: mergedHistory },
+        previousState: { history: previousHistory },
+      } = action.payload;
+      return Object.keys(mergedHistory)
+        .filter((pieceId) => state[pieceId] === mergedHistory[pieceId])
+        .reduce((o, pieceId) => {
+          if (!previousHistory[pieceId]) {
+            delete o[pieceId];
+            return o;
+          }
+          if (previousHistory[pieceId] < mergedHistory[pieceId]) {
+            o[pieceId] = previousHistory[pieceId];
+            return o;
+          }
+          return o;
+        }, Object.assign({}, state));
     }
   }
   return state;

@@ -3,11 +3,13 @@ import userDataReducer from './user-data-reducer';
 import token from './token/token-reducer';
 import isFetching from './fetch/is-fetching-reducer';
 import isPostingActions from './actions/is-posting-actions-reducer';
+import anonymousDataBackup from './anonymous-data/anonymous-data-backup-reducer';
 
 const synchronizationReducer = combineReducers({
   token,
   isFetching,
   isPostingActions,
+  anonymousDataBackup,
 });
 
 const synchronizedUserReducer = (state, action) => {

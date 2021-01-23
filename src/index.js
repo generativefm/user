@@ -1,3 +1,6 @@
+export { default as hasAnonymousData } from './anonymous-data/has-anonymous-data';
+export { default as makeAnonymousImportMiddleware } from './anonymous-data/make-anonymous-import-middleware';
+export { default as selectAnonymousDataBackup } from './anonymous-data/select-anonymous-data-backup';
 export { default as selectDislikes } from './dislikes/select-dislikes';
 export {
   default as userDislikedPiece,
@@ -34,9 +37,10 @@ export { default as makeStoreStateMiddleware } from './storage/make-store-state-
 export { default as selectToken } from './token/select-token';
 export { default as tokenChanged, TOKEN_CHANGED } from './token/token-changed';
 export { default as selectUserId } from './user-id/select-user-id';
-export { default as mergeData, MERGE_DATA } from './merge-data';
 export { default as makeSynchronizeUserMiddleware } from './make-synchronize-user-middleware';
+export { default as mergeData, MERGE_DATA } from './merge-data';
 export { default as synchronizedUserReducer } from './synchronized-user-reducer';
+export { default as unmergeData, UNMERGE_DATA } from './unmerge-data';
 export {
   default as userAuthenticated,
   USER_AUTHENTICATED,

@@ -19,6 +19,7 @@ import clearStoredActions from './actions/clear-stored-actions';
 
 const makeSynchronizeUserMiddleware = ({ selectUser }) => (store) => (next) => {
   const actionsToPost = new Set();
+  const postingActions = new Set();
   const isReady = IS_STORAGE_SUPPORTED
     ? getStoredActions().then((actions) => {
         actions.forEach((storedAction) => actionsToPost.add(storedAction));
@@ -30,9 +31,22 @@ const makeSynchronizeUserMiddleware = ({ selectUser }) => (store) => (next) => {
     token = selectToken(userState),
     userId = selectUserId(userState),
   }) => {
-    const attemptedPostActions = Array.from(actionsToPost);
-    return isReady.then(() =>
-      postActions({ actions: attemptedPostActions, userId, token })
+    return isReady.then(() => {
+      const attemptedPostActions = Array.from(actionsToPost).filter(
+        (action) => !postingActions.has(action)
+      );
+      attemptedPostActions.forEach((action) => {
+        postingActions.add(action);
+      });
+      if (attemptedPostActions.length === 0) {
+        return Promise.resolve();
+      }
+      return postActions({ actions: attemptedPostActions, userId, token })
+        .finally(() => {
+          attemptedPostActions.forEach((action) => {
+            postingActions.delete(action);
+          });
+        })
         .then(({ user }) => {
           if (user === null) {
             store.dispatch(postActionsFailed());
@@ -52,8 +66,8 @@ const makeSynchronizeUserMiddleware = ({ selectUser }) => (store) => (next) => {
         .catch((err) => {
           console.error(err);
           store.dispatch(postActionsFailed());
-        })
-    );
+        });
+    });
   };
 
   const postActionsIfNotPosting = ({

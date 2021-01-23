@@ -7,6 +7,7 @@ import { ACTIONS_POSTED } from '../actions/actions-posted';
 import { MERGE_DATA } from '../merge-data';
 import { USER_AUTHENTICATED } from '../user-authenticated';
 import { USER_STARTED_ANONYMOUS_SESSION } from '../user-started-anonymous-session';
+import { UNMERGE_DATA } from '../unmerge-data';
 
 const dislikesReducer = (state = {}, action) => {
   switch (action.type) {
@@ -57,6 +58,38 @@ const dislikesReducer = (state = {}, action) => {
             : state[pieceId];
           return o;
         }, Object.assign({}, dislikes));
+    }
+    case UNMERGE_DATA: {
+      const {
+        mergedData: { dislikes: mergedDislikes = {}, likes: mergedLikes = {} },
+        previousState: { dislikes: previousDislikes = {} },
+      } = action.payload;
+      const {
+        currentState: { likes: currentLikes = {} },
+      } = action.meta;
+      const newState = Object.keys(mergedDislikes)
+        .filter((pieceId) => state[pieceId] === mergedDislikes[pieceId])
+        .reduce((o, pieceId) => {
+          if (!previousDislikes[pieceId]) {
+            delete o[pieceId];
+            return o;
+          }
+          if (previousDislikes[pieceId] < mergedDislikes[pieceId]) {
+            o[pieceId] = previousDislikes[pieceId];
+            return o;
+          }
+          return o;
+        }, Object.assign({}, state));
+      return Object.keys(mergedLikes)
+        .filter(
+          (pieceId) =>
+            currentLikes[pieceId] === mergedLikes[pieceId] &&
+            previousDislikes[pieceId]
+        )
+        .reduce((o, pieceId) => {
+          o[pieceId] = previousDislikes[pieceId];
+          return o;
+        }, newState);
     }
   }
   return state;

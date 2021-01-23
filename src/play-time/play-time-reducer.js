@@ -4,6 +4,7 @@ import { USER_LOGGED_OUT } from '../user-logged-out';
 import { MERGE_DATA } from '../merge-data';
 import { USER_AUTHENTICATED } from '../user-authenticated';
 import { USER_STARTED_ANONYMOUS_SESSION } from '../user-started-anonymous-session';
+import { UNMERGE_DATA } from '../unmerge-data';
 
 const playTimeReducer = (state = {}, action) => {
   switch (action.type) {
@@ -23,12 +24,19 @@ const playTimeReducer = (state = {}, action) => {
     }
     case MERGE_DATA: {
       const { playTime = {} } = action.payload;
-      return Object.keys(state).reduce((o, pieceId) => {
-        o[pieceId] = playTime[pieceId]
-          ? playTime[pieceId] + state[pieceId]
-          : state[pieceId];
+      return Object.keys(playTime).reduce((o, pieceId) => {
+        o[pieceId] = playTime[pieceId] + (state[pieceId] || 0);
         return o;
-      }, Object.assign({}, playTime));
+      }, Object.assign({}, state));
+    }
+    case UNMERGE_DATA: {
+      const {
+        mergedData: { playTime },
+      } = action.payload;
+      return Object.keys(playTime).reduce((o, pieceId) => {
+        o[pieceId] = Math.max(state[pieceId] - playTime[pieceId], 0);
+        return o;
+      }, Object.assign({}, state));
     }
   }
   return state;

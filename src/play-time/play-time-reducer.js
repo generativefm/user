@@ -5,6 +5,7 @@ import { MERGE_DATA } from '../merge-data';
 import { USER_AUTHENTICATED } from '../user-authenticated';
 import { USER_STARTED_ANONYMOUS_SESSION } from '../user-started-anonymous-session';
 import { UNMERGE_DATA } from '../unmerge-data';
+import { PLAY_TIME_INCREASED } from './play-time-increased';
 
 const playTimeReducer = (state = {}, action) => {
   switch (action.type) {
@@ -35,6 +36,13 @@ const playTimeReducer = (state = {}, action) => {
       } = action.payload;
       return Object.keys(playTime).reduce((o, pieceId) => {
         o[pieceId] = Math.max(state[pieceId] - playTime[pieceId], 0);
+        return o;
+      }, Object.assign({}, state));
+    }
+    case PLAY_TIME_INCREASED: {
+      const { additionalPlayTime } = action.payload;
+      return Object.keys(additionalPlayTime).reduce((o, pieceId) => {
+        o[pieceId] = additionalPlayTime[pieceId] + (state[pieceId] || 0);
         return o;
       }, Object.assign({}, state));
     }

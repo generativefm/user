@@ -31,6 +31,10 @@ export {
 export { ACTIONS_POSTED } from './actions/actions-posted';
 export { POST_ACTIONS_FAILED } from './actions/post-actions-failed';
 export { default as selectIsPostingActions } from './actions/select-is-posting-actions';
+export {
+  default as playTimeIncreased,
+  PLAY_TIME_INCREASED,
+} from './play-time/play-time-increased';
 export { default as selectPlayTime } from './play-time/select-play-time';
 export { default as getStoredState } from './storage/get-stored-state';
 export { default as makeStoreStateMiddleware } from './storage/make-store-state-middleware';

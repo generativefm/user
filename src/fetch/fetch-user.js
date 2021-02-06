@@ -1,7 +1,7 @@
 import ENDPOINT from '../endpoint';
 
 const CACHE_NAME = '@generative.fm/user';
-const IS_CACHE_SUPPORTED = Boolean(caches);
+const IS_CACHE_SUPPORTED = Boolean(self.caches);
 
 const transformResponse = (response) => {
   if (!response.ok) {
@@ -14,7 +14,7 @@ const transformResponse = (response) => {
 };
 
 const fetchWithCache = (request) =>
-  caches.open(CACHE_NAME).then((cache) =>
+  self.caches.open(CACHE_NAME).then((cache) =>
     cache
       .add(request)
       .then(() =>

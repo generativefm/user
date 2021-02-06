@@ -1,26 +1,6 @@
-# user
+# @generative.fm/user
 
-User-related utilities for Generative.fm
-
-## Usage
-
-```javascript
-import { getUser, updateUser, clearUser } from '@generative.fm/user';
-
-getUser({ userId, token })
-  .then((user) =>
-    updateUser({
-      partialUser: {
-        userId,
-        updatedProp: 'value',
-      },
-      token,
-    })
-  )
-  .then(() => {
-    clearUser();
-  });
-```
+User-related utilities for Generative.fm.
 
 ## Endpoint
 

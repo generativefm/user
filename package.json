@@ -1,6 +1,6 @@
 {
   "name": "@generative.fm/user",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "User-related utilities for Generative.fm",
   "main": "dist/user.cjs.js",
   "module": "dist/user.esm.js",

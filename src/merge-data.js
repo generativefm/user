@@ -2,7 +2,7 @@ export const MERGE_DATA = 'MERGE_DATA';
 
 const mergeData = (
   userData,
-  { shouldNotRedoAfterAnonymousDataMerge = false }
+  { shouldNotRedoAfterAnonymousDataMerge = false } = {}
 ) => ({
   type: MERGE_DATA,
   payload: userData,

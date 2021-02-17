@@ -15,10 +15,6 @@ export { default as fetchUser, FETCH_USER } from './fetch/fetch-user-action';
 export { default as selectIsFetching } from './fetch/select-is-fetching';
 export { default as userFetched, USER_FETCHED } from './fetch/user-fetched';
 export { default as selectHistory } from './history/select-history';
-export {
-  default as userPlayedPiece,
-  USER_PLAYED_PIECE,
-} from './history/user-played-piece';
 export { default as selectLikes } from './likes/select-likes';
 export {
   default as userLikedPiece,

@@ -7,6 +7,15 @@
     {
       "files": "rollup.config.js",
       "parserOptions": { "sourceType": "module" }
+    },
+    {
+      "files": "src/**/*.spec.js",
+      "env": {
+        "mocha": true
+      },
+      "globals": {
+        "expect": "readonly"
+      }
     }
   ]
 }

@@ -6,9 +6,26 @@ import { MERGE_DATA } from '../merge-data';
 import { USER_AUTHENTICATED } from '../user-authenticated';
 import { USER_STARTED_ANONYMOUS_SESSION } from '../user-started-anonymous-session';
 import { UNMERGE_DATA } from '../unmerge-data';
+import { PIECE_PLAYED } from './piece-playback-action';
 
 const historyReducer = (state = {}, action) => {
+  if (
+    action.meta &&
+    action.meta.userEvent &&
+    action.meta.userEvent.type === PIECE_PLAYED &&
+    action.meta.userEvent.data &&
+    action.meta.userEvent.data.pieceId
+  ) {
+    const {
+      timestamp,
+      userEvent: {
+        data: { pieceId },
+      },
+    } = action.meta;
+    return Object.assign({}, state, { [pieceId]: timestamp });
+  }
   switch (action.type) {
+    // legacy support for old action
     case USER_PLAYED_PIECE: {
       const {
         payload: { pieceId },
@@ -28,7 +45,10 @@ const historyReducer = (state = {}, action) => {
     }
     case USER_FETCHED:
     case ACTIONS_POSTED: {
-      return action.payload.user.history || {};
+      if (typeof action.payload.user.history !== 'object') {
+        return {};
+      }
+      return Object.assign({}, action.payload.user.history);
     }
     case MERGE_DATA: {
       const { history = {} } = action.payload;

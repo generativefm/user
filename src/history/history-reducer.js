@@ -6,16 +6,10 @@ import { MERGE_DATA } from '../merge-data';
 import { USER_AUTHENTICATED } from '../user-authenticated';
 import { USER_STARTED_ANONYMOUS_SESSION } from '../user-started-anonymous-session';
 import { UNMERGE_DATA } from '../unmerge-data';
-import { PIECE_PLAYED } from './piece-playback-action';
+import isPiecePlaybackAction from './is-piece-playback-action';
 
 const historyReducer = (state = {}, action) => {
-  if (
-    action.meta &&
-    action.meta.userEvent &&
-    action.meta.userEvent.type === PIECE_PLAYED &&
-    action.meta.userEvent.data &&
-    action.meta.userEvent.data.pieceId
-  ) {
+  if (isPiecePlaybackAction(action)) {
     const {
       timestamp,
       userEvent: {

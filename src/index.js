@@ -14,6 +14,7 @@ export { FETCH_FAILED } from './fetch/fetch-failed';
 export { default as fetchUser, FETCH_USER } from './fetch/fetch-user-action';
 export { default as selectIsFetching } from './fetch/select-is-fetching';
 export { default as userFetched, USER_FETCHED } from './fetch/user-fetched';
+export { default as isPiecePlaybackAction } from './history/is-piece-playback-action';
 export { default as piecePlaybackAction } from './history/piece-playback-action';
 export { default as selectHistory } from './history/select-history';
 export { default as selectLikes } from './likes/select-likes';

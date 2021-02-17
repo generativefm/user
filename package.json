@@ -7,8 +7,9 @@
   "scripts": {
     "test": "karma start --single-run",
     "test:watch": "karma start",
+    "lint": "eslint src",
     "build": "rollup -c",
-    "preversion": "npm run build",
+    "preversion": "npm run lint && npm test && npm run build",
     "postversion": "git push && git push --tags"
   },
   "files": [

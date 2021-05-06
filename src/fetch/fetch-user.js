@@ -52,7 +52,7 @@ const fetchUser = ({ userId, token } = {}) => {
       new Error("Can't get user data without a userId and a token")
     );
   }
-  const fetchUrl = `${ENDPOINT}/user/${userId}`;
+  const fetchUrl = encodeURI(`${ENDPOINT}/user/${userId}`);
   const headers = {
     Authorization: `Bearer ${token}`,
   };

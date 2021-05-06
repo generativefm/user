@@ -1,9 +1,10 @@
 import ENDPOINT from '../endpoint';
 
 const postActions = ({ actions, userId, token }) => {
-  const postUrl = `${ENDPOINT}/user/${userId}/actions`;
+  const postUrl = encodeURI(`${ENDPOINT}/user/${userId}/actions`);
   const headers = {
     Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
   };
   return fetch(postUrl, {
     headers,
